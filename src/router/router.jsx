@@ -7,6 +7,8 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import AddCar from "../pages/AddCar";
 import PrivateRoute from "../routes/PrivateRoute";
+import MyCars from "../pages/MyCars";
+import AvailableCars from "../pages/AvailableCars";
 
 
 const router = createBrowserRouter([
@@ -29,6 +31,18 @@ const router = createBrowserRouter([
             {
                 path: "/add-car",
                 element: <PrivateRoute><AddCar /></PrivateRoute>
+            },
+            {
+                path: "/my-cars",
+                element: <PrivateRoute><MyCars /></PrivateRoute>
+            },
+            {
+                path: "/available-cars",
+                element: <AvailableCars />
+            },
+            {
+                path: "/car/:id",
+                // element: <CarDetails />
             }
         ],
         // errorElement:<NotFound/>
