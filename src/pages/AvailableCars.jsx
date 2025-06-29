@@ -9,7 +9,7 @@ const AvailableCars = () => {
   const [sortOption, setSortOption] = useState("newest");
 
   useEffect(() => {
-    axios.get("http://localhost:3000/available-cars").then((res) => {
+    axios.get("http://localhost:3000/cars").then((res) => {
       setCars(res.data);
     });
   }, []);
