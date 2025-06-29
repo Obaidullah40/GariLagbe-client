@@ -28,7 +28,7 @@ const AvailableCars = () => {
               </figure>
               <div className="card-body space-y-2">
                 <h3 className="text-xl font-bold text-primary">{car.model}</h3>
-                {/* <p className="text-gray-600">{car.description.slice(0, 100)}...</p> */}
+                <p className="text-gray-600">{car.description}...</p>
                 <p className="text-sm text-gray-500">Location: {car.location}</p>
                 <p className="text-sm text-gray-500">Price: ${car.dailyPrice}/day</p>
                 <Link to={`/car/${car._id}`}>

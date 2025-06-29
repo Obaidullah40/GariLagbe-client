@@ -1,6 +1,5 @@
 import React, { use } from 'react';
 import { Link, NavLink } from 'react-router';
-import useAuth from '../../hooks/useAuth';
 import { FiLogOut } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import { FaCarAlt } from 'react-icons/fa';

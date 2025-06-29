@@ -4,27 +4,25 @@ import axios from "axios";
 import useAuth from "../hooks/useAuth";
 
 const AddCar = () => {
-  const { user } = useAuth;
+  const { user } = useAuth(); 
 
   const handleAddCar = async (e) => {
     e.preventDefault();
     const form = e.target;
 
-   const formData = new FormData(form);
+    const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    // Add additional fields
-    data.salary = parseFloat(data.salary);
+    // Convert types
+    data.dailyPrice = parseFloat(data.dailyPrice);
+    data.available = data.available === "true";
+    data.bookingCount = 0;
     data.datePosted = new Date().toISOString();
-    data.status = "open";
-    data.postedBy = {
-      email: user?.email,
-      name: user?.displayName,
-    };
-
+    data.userEmail = user?.email;
+    data.userName = user?.displayName;
 
     try {
-      const res = await axios.post("http://localhost:3000/cars", data)
+      const res = await axios.post("http://localhost:3000/cars", data);
       if (res.data.insertedId) {
         Swal.fire("Success!", "Car added successfully!", "success");
         form.reset();
