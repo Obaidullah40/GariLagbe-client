@@ -9,6 +9,8 @@ import AddCar from "../pages/AddCar";
 import PrivateRoute from "../routes/PrivateRoute";
 import MyCars from "../pages/MyCars";
 import AvailableCars from "../pages/AvailableCars";
+import CarDetails from "../pages/Shared/CarDetails";
+import MyBookings from "../pages/MyBookings";
 
 
 const router = createBrowserRouter([
@@ -42,8 +44,12 @@ const router = createBrowserRouter([
             },
             {
                 path: "/car/:id",
-                // element: <CarDetails />
-            }
+                element: <CarDetails />
+            },
+            {
+                path: "/my-bookings",
+                element: <PrivateRoute><MyBookings /></PrivateRoute>
+            },
         ],
         // errorElement:<NotFound/>
     },

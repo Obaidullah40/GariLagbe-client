@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
-import { Link } from "react-route";
+import { Link } from "react-router";
 
 const MyCars = () => {
   const { user } = useAuth();
