@@ -1,20 +1,40 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router";
-
+import useAuth from "../hooks/useAuth";
 
 const AvailableCars = () => {
+  const { user } = useAuth();
   const [cars, setCars] = useState([]);
   const [view, setView] = useState("grid");
   const [sortOption, setSortOption] = useState("newest");
+  const [searchTerm, setSearchTerm] = useState(""); 
 
-  useEffect(() => {
-    axios.get("http://localhost:3000/cars").then((res) => {
+
+useEffect(() => {
+  if (!user?.accessToken) return; 
+
+  axios.get("https://gari-lagbe-server.vercel.app/cars", {
+      headers: {
+        Authorization: `Bearer ${user?.accessToken}`,
+      }
+    })
+    .then((res) => {
       setCars(res.data);
+    })
+    .catch((err) => {
+      console.error("Error fetching cars:", err);
     });
-  }, []);
+}, [user?.accessToken]);
 
-  const sortedCars = [...cars].sort((a, b) => {
+
+  // 🔍 Filter then sort
+  const filteredCars = cars.filter((car) =>
+    car.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    car.location?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const sortedCars = [...filteredCars].sort((a, b) => {
     if (sortOption === "newest") {
       return new Date(b.datePosted) - new Date(a.datePosted);
     } else if (sortOption === "oldest") {
@@ -32,7 +52,17 @@ const AvailableCars = () => {
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
         <h2 className="text-3xl font-bold text-primary">Available Cars</h2>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+          {/* 🔍 Search Input */}
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by model or location"
+            className="input input-bordered w-full md:w-72"
+          />
+
+          {/* 🔽 Sort Dropdown */}
           <select
             className="select select-bordered"
             value={sortOption}
@@ -44,8 +74,8 @@ const AvailableCars = () => {
             <option value="high-price">Price: High to Low</option>
           </select>
 
-          <button onClick={() => setView(view === "grid" ? "list" : "grid")}
-            className="btn btn-sm">
+          {/* 🔄 Toggle View */}
+          <button onClick={() => setView(view === "grid" ? "list" : "grid")} className="btn btn-sm">
             {view === "grid" ? "List View" : "Grid View"}
           </button>
         </div>
@@ -54,11 +84,21 @@ const AvailableCars = () => {
       {sortedCars.length === 0 ? (
         <p className="text-center text-gray-500">No cars available.</p>
       ) : (
-        <div className={`grid ${view === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" : "grid-cols-1 gap-4"} max-w-7xl mx-auto`}>
+        <div
+          className={`grid ${
+            view === "grid"
+              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              : "grid-cols-1 gap-4"
+          } max-w-7xl mx-auto`}
+        >
           {sortedCars.map((car) => (
             <div key={car._id} className="card bg-base-200 shadow-md">
               <figure className="h-52 overflow-hidden">
-                <img src={car.imageUrl} alt={car.model} className="object-cover w-full h-full" />
+                <img
+                  src={car.imageUrl}
+                  alt={car.model}
+                  className="object-cover w-full h-full"
+                />
               </figure>
               <div className="card-body">
                 <h2 className="text-xl font-bold text-primary">{car.model}</h2>
@@ -80,4 +120,3 @@ const AvailableCars = () => {
 };
 
 export default AvailableCars;
-

@@ -1,12 +1,63 @@
-# React + Vite
+# 🚗 Career Code - A Car Rental & Job Application Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Career Code is a full-stack web application that allows users to explore rental cars, book them securely, and apply for jobs posted by companies. It features Firebase Authentication, JWT-secured APIs, and modern UI/UX design.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌐 Live Website
 
-## Expanding the ESLint configuration
+👉 [Visit Live Site](https://career-code-b3829.web.app)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🎯 Project Purpose
+
+The goal of this project is to demonstrate:
+
+- Secure user authentication using Firebase
+- Backend protection using JWT tokens and HTTP-only cookies
+- Dynamic role-based dashboard for both users and recruiters
+- Booking system with analytics
+- Clean, responsive UI for a real-world rental and job application platform
+
+---
+
+## ✨ Key Features
+
+### 🚘 Car Rental
+- View all available cars in a grid or list layout
+- Search, filter, and sort by price/date
+- Book cars with secure authentication
+- Track "My Bookings" and cancel or modify them
+
+### 💼 Job Applications
+- Recruiters can post jobs and track applicants
+- Applicants can browse and apply for jobs
+- Application tracking with status (e.g., pending, accepted)
+
+### 🔒 Authentication & Security
+- Firebase authentication (Google login)
+- JWT token stored in HTTP-only cookie
+- Protected API routes with email verification
+- Logout clears session securely
+
+### 📊 Dashboard
+- HR Dashboard: View jobs and applicant stats
+- User Dashboard: View and manage bookings/applications
+
+---
+
+## ⚙️ Tech Stack & NPM Packages
+
+| Area              | Tech/Library                         |
+|-------------------|--------------------------------------|
+| Frontend          | React, Tailwind CSS, React Router    |
+| Authentication    | Firebase (Google Auth)               |
+| Backend           | Express.js, MongoDB Atlas            |
+| Security          | Firebase Admin, JWT, Cookie-Parser   |
+| API Calls         | Axios                                |
+| Date Formatting   | date-fns                             |
+| Icons             | react-icons                          |
+| Alert Dialogs     | sweetalert2                          |
+| Deployment        | Firebase Hosting                     |
+

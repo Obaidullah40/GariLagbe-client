@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import axios from "axios";
+import useAuth from "../../hooks/useAuth";
 
 
 const RecentListings = () => {
+    // const {user} = useAuth();
     const [cars, setCars] = useState([]);
 
     useEffect(() => {
         // Replace with your backend API
-        axios.get("http://localhost:3000/cars")
+        axios.get("https://gari-lagbe-server.vercel.app/available-cars")
             .then(res => setCars(res.data.slice(0, 6)))
             .catch(err => console.error(err));
     }, []);

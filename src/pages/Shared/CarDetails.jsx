@@ -10,7 +10,7 @@ const CarDetails = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/available-cars/${id}`)
+    axios.get(`https://gari-lagbe-server.vercel.app/available-cars/${id}`)
       .then(res => {
         setCar(res.data);
       });
@@ -20,7 +20,7 @@ const CarDetails = () => {
     return <div className="text-center py-20">Loading...</div>;
   }
 
-  // ✅ Handle Booking Confirmation
+  // Handle Booking Confirmation
   const handleBookingConfirm = async () => {
     const bookingData = {
       carId: car._id,
@@ -34,7 +34,7 @@ const CarDetails = () => {
     };
 
     try {
-      const res = await axios.post("http://localhost:3000/bookings", bookingData);
+      const res = await axios.post("https://gari-lagbe-server.vercel.app/bookings", bookingData);
       if (res.data.insertedId || res.data.acknowledged) {
         Swal.fire("Success!", "Booking confirmed!", "success");
         document.getElementById("book_modal").close();
@@ -73,7 +73,7 @@ const CarDetails = () => {
         Book This Car
       </button>
 
-      {/* ✅ Booking Confirmation Modal */}
+      {/* Booking Confirmation Modal */}
       <dialog id="book_modal" className="modal">
         <form method="dialog" className="modal-box">
           <h3 className="font-bold text-lg mb-4">Confirm Booking</h3>

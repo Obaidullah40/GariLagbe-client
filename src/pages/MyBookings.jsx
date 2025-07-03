@@ -15,14 +15,18 @@ const MyBookings = () => {
   useEffect(() => {
     if (!user?.email) return;
 
-    axios.get(`http://localhost:3000/bookings?email=${user.email}`)
+    axios.get(`https://gari-lagbe-server.vercel.app/bookings?email=${user.email}`,{
+      headers: {
+        Authorization: `Bearer ${user?.accessToken}`,
+      }
+    })
       .then(async res => {
         const rawBookings = res.data;
 
         // enrich each booking with car info
         const enriched = await Promise.all(
           rawBookings.map(async booking => {
-            const carRes = await axios.get(`http://localhost:3000/available-cars/${booking.carId}`);
+            const carRes = await axios.get(`https://gari-lagbe-server.vercel.app/available-cars/${booking.carId}`);
             return {
               ...booking,
               car: carRes.data
@@ -45,7 +49,7 @@ const MyBookings = () => {
     });
 
     if (confirm.isConfirmed) {
-      await axios.put(`http://localhost:3000/bookings/${id}`, { status: "canceled" });
+      await axios.put(`https://gari-lagbe-server.vercel.app/bookings/${id}`, { status: "canceled" });
       setBookings(prev =>
         prev.map(b => b._id === id ? { ...b, status: "canceled" } : b)
       );
@@ -55,7 +59,7 @@ const MyBookings = () => {
 
   // Modify booking
   const handleModifySubmit = async () => {
-    await axios.put(`http://localhost:3000/bookings/${selectedBooking._id}`, {
+    await axios.put(`https://gari-lagbe-server.vercel.app/bookings/${selectedBooking._id}`, {
       startDate: newDates.start,
       endDate: newDates.end
     });

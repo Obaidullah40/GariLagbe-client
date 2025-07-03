@@ -8,10 +8,15 @@ const MyCars = () => {
   const { user } = useAuth();
   const [myCars, setMyCars] = useState([]);
   const [selectedCar, setSelectedCar] = useState(null);
+  const [sortOption, setSortOption] = useState("newest");
 
   const fetchMyCars = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/cars?email=${user?.email}`);
+      const res = await axios.get(`https://gari-lagbe-server.vercel.app/cars?email=${user?.email}`,{
+        headers: {
+        Authorization: `Bearer ${user?.accessToken}`
+      }
+      });
       setMyCars(res.data);
     } catch (err) {
       console.error(err);
@@ -22,6 +27,21 @@ const MyCars = () => {
     if (user?.email) fetchMyCars();
   }, [user]);
 
+  const sortedCars = [...myCars].sort((a, b) => {
+    if (sortOption === "newest") {
+      return new Date(b.datePosted) - new Date(a.datePosted);
+    } else if (sortOption === "oldest") {
+      return new Date(a.datePosted) - new Date(b.datePosted);
+    } else if (sortOption === "low-price") {
+      return a.dailyPrice - b.dailyPrice;
+    } else if (sortOption === "high-price") {
+      return b.dailyPrice - a.dailyPrice;
+    }
+    return 0;
+  });
+
+  // console.log(user.accessToken)
+
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -31,7 +51,7 @@ const MyCars = () => {
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`http://localhost:3000/cars/${id}`).then(() => {
+        axios.delete(`https://gari-lagbe-server.vercel.app/cars/${id}`).then(() => {
           Swal.fire("Deleted!", "Car has been deleted.", "success");
           fetchMyCars();
         });
@@ -53,7 +73,7 @@ const MyCars = () => {
       location: form.location.value,
     };
 
-    axios.put(`http://localhost:3000/cars/${selectedCar._id}`, updated).then(() => {
+    axios.put(`https://gari-lagbe-server.vercel.app/cars/${selectedCar._id}`, updated).then(() => {
       Swal.fire("Updated!", "Car info updated.", "success");
       form.reset();
       setSelectedCar(null);
@@ -63,9 +83,21 @@ const MyCars = () => {
 
   return (
     <div className="px-4 py-12 max-w-7xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6 text-primary">My Listed Cars</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-primary">My Listed Cars</h2>
+        <select
+          className="select select-bordered"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+        >
+          <option value="newest">Date: Newest First</option>
+          <option value="oldest">Date: Oldest First</option>
+          <option value="low-price">Price: Low to High</option>
+          <option value="high-price">Price: High to Low</option>
+        </select>
+      </div>
 
-      {myCars.length === 0 ? (
+      {sortedCars.length === 0 ? (
         <p>
           You haven't added any cars yet.{' '}
           <Link to="/add-car" className="text-blue-500 underline">Add a Car</Link>
@@ -85,7 +117,7 @@ const MyCars = () => {
               </tr>
             </thead>
             <tbody>
-              {myCars.map((car) => (
+              {sortedCars.map((car) => (
                 <tr key={car._id}>
                   <td>
                     <img src={car.imageUrl} alt={car.model} className="w-20 h-12 object-cover rounded" />

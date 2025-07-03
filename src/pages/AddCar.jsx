@@ -22,7 +22,7 @@ const AddCar = () => {
     data.userName = user?.displayName;
 
     try {
-      const res = await axios.post("http://localhost:3000/cars", data);
+      const res = await axios.post("https://gari-lagbe-server.vercel.app/cars", data);
       if (res.data.insertedId) {
         Swal.fire("Success!", "Car added successfully!", "success");
         form.reset();
