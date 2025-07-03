@@ -14,11 +14,7 @@ const AvailableCars = () => {
 useEffect(() => {
   if (!user?.accessToken) return; 
 
-  axios.get("https://gari-lagbe-server.vercel.app/cars", {
-      headers: {
-        Authorization: `Bearer ${user?.accessToken}`,
-      }
-    })
+  axios.get("https://gari-lagbe-server.vercel.app/available-cars", )
     .then((res) => {
       setCars(res.data);
     })
