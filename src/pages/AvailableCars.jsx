@@ -4,7 +4,6 @@ import { Link } from "react-router";
 import useAuth from "../hooks/useAuth";
 
 const AvailableCars = () => {
-  const { user } = useAuth();
   const [cars, setCars] = useState([]);
   const [view, setView] = useState("grid");
   const [sortOption, setSortOption] = useState("newest");
@@ -12,7 +11,6 @@ const AvailableCars = () => {
 
 
 useEffect(() => {
-  if (!user?.accessToken) return; 
 
   axios.get("https://gari-lagbe-server.vercel.app/available-cars", )
     .then((res) => {
@@ -21,7 +19,7 @@ useEffect(() => {
     .catch((err) => {
       console.error("Error fetching cars:", err);
     });
-}, [user?.accessToken]);
+}, []);
 
 
   // 🔍 Filter then sort
