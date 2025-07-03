@@ -51,7 +51,7 @@ const router = createBrowserRouter([
                 element: <PrivateRoute><MyBookings /></PrivateRoute>
             },
         ],
-        // errorElement:<NotFound/>
+        errorElement:<NotFound/>
     },
 
 ]);
