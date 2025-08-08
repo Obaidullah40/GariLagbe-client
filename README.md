@@ -6,7 +6,7 @@ Career Code is a full-stack web application that allows users to explore rental 
 
 ## 🌐 Live Website
 
-👉 [Visit Live Site](https://career-code-b3829.web.app)
+👉 [Visit Live Site](https://assignment-11-garilagbe.web.app/)
 
 ---
 
