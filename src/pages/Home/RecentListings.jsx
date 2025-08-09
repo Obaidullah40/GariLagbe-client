@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import axios from "axios";
-import useAuth from "../../hooks/useAuth";
 
 
 const RecentListings = () => {
-    // const {user} = useAuth();
     const [cars, setCars] = useState([]);
 
     useEffect(() => {
