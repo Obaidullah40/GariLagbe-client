@@ -3,23 +3,31 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
 import { Link } from "react-router";
+import Loading from "./Shared/Loading"; // ✅ Loading Component Import
 
 const MyCars = () => {
   const { user } = useAuth();
   const [myCars, setMyCars] = useState([]);
   const [selectedCar, setSelectedCar] = useState(null);
   const [sortOption, setSortOption] = useState("newest");
+  const [loading, setLoading] = useState(true); 
 
   const fetchMyCars = async () => {
     try {
-      const res = await axios.get(`https://gari-lagbe-server.vercel.app/cars?email=${user?.email}`,{
-        headers: {
-        Authorization: `Bearer ${user?.accessToken}`
-      }
-      });
+      setLoading(true);
+      const res = await axios.get(
+        `https://gari-lagbe-server.vercel.app/cars?email=${user?.email}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`
+          }
+        }
+      );
       setMyCars(res.data);
+      setLoading(false); 
     } catch (err) {
       console.error(err);
+      setLoading(false);
     }
   };
 
@@ -39,8 +47,6 @@ const MyCars = () => {
     }
     return 0;
   });
-
-  // console.log(user.accessToken)
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -81,6 +87,9 @@ const MyCars = () => {
     });
   };
 
+ 
+  if (loading) return <Loading />;
+
   return (
     <div className="px-4 py-12 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -99,8 +108,10 @@ const MyCars = () => {
 
       {sortedCars.length === 0 ? (
         <p>
-          You haven't added any cars yet.{' '}
-          <Link to="/add-car" className="text-blue-500 underline">Add a Car</Link>
+          You haven't added any cars yet.{" "}
+          <Link to="/add-car" className="text-blue-500 underline">
+            Add a Car
+          </Link>
         </p>
       ) : (
         <div className="overflow-x-auto">
@@ -120,7 +131,11 @@ const MyCars = () => {
               {sortedCars.map((car) => (
                 <tr key={car._id}>
                   <td>
-                    <img src={car.imageUrl} alt={car.model} className="w-20 h-12 object-cover rounded" />
+                    <img
+                      src={car.imageUrl}
+                      alt={car.model}
+                      className="w-20 h-12 object-cover rounded"
+                    />
                   </td>
                   <td>{car.model}</td>
                   <td>${car.dailyPrice}</td>
@@ -156,21 +171,69 @@ const MyCars = () => {
         <dialog id="update_modal" className="modal">
           <form method="dialog" className="modal-box" onSubmit={handleUpdate}>
             <h3 className="font-bold text-lg mb-2">Update Car Info</h3>
-            <input name="model" defaultValue={selectedCar.model} className="input input-bordered w-full mb-2" required />
-            <input name="dailyPrice" type="number" defaultValue={selectedCar.dailyPrice} className="input input-bordered w-full mb-2" required />
-            <select name="available" className="select select-bordered w-full mb-2" defaultValue={selectedCar.available.toString()}>
+            <input
+              name="model"
+              defaultValue={selectedCar.model}
+              className="input input-bordered w-full mb-2"
+              required
+            />
+            <input
+              name="dailyPrice"
+              type="number"
+              defaultValue={selectedCar.dailyPrice}
+              className="input input-bordered w-full mb-2"
+              required
+            />
+            <select
+              name="available"
+              className="select select-bordered w-full mb-2"
+              defaultValue={selectedCar.available.toString()}
+            >
               <option value="true">Available</option>
               <option value="false">Not Available</option>
             </select>
-            <input name="regNumber" defaultValue={selectedCar.regNumber} className="input input-bordered w-full mb-2" required />
-            <input name="features" defaultValue={selectedCar.features} className="input input-bordered w-full mb-2" required />
-            <input name="imageUrl" defaultValue={selectedCar.imageUrl} className="input input-bordered w-full mb-2" required />
-            <input name="location" defaultValue={selectedCar.location} className="input input-bordered w-full mb-2" required />
-            <textarea name="description" defaultValue={selectedCar.description} className="textarea textarea-bordered w-full mb-2" required />
+            <input
+              name="regNumber"
+              defaultValue={selectedCar.regNumber}
+              className="input input-bordered w-full mb-2"
+              required
+            />
+            <input
+              name="features"
+              defaultValue={selectedCar.features}
+              className="input input-bordered w-full mb-2"
+              required
+            />
+            <input
+              name="imageUrl"
+              defaultValue={selectedCar.imageUrl}
+              className="input input-bordered w-full mb-2"
+              required
+            />
+            <input
+              name="location"
+              defaultValue={selectedCar.location}
+              className="input input-bordered w-full mb-2"
+              required
+            />
+            <textarea
+              name="description"
+              defaultValue={selectedCar.description}
+              className="textarea textarea-bordered w-full mb-2"
+              required
+            />
 
             <div className="modal-action">
-              <button type="submit" className="btn btn-primary">Update</button>
-              <button type="button" className="btn" onClick={() => setSelectedCar(null)}>Cancel</button>
+              <button type="submit" className="btn btn-primary">
+                Update
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setSelectedCar(null)}
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </dialog>

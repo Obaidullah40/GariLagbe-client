@@ -4,38 +4,55 @@ import Swal from "sweetalert2";
 import useAuth from "../hooks/useAuth";
 import { FaTrashAlt, FaCalendarAlt } from "react-icons/fa";
 import { format } from "date-fns";
+import Loading from "./Shared/Loading"; // ✅ Loading Import
 
 const MyBookings = () => {
   const { user } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [newDates, setNewDates] = useState({ start: "", end: "" });
+  const [loading, setLoading] = useState(true); // ✅ Loading state
 
   // Load bookings with car details
   useEffect(() => {
     if (!user?.email) return;
 
-    axios.get(`https://gari-lagbe-server.vercel.app/bookings?email=${user.email}`,{
-      headers: {
-        Authorization: `Bearer ${user?.accessToken}`,
-      }
-    })
-      .then(async res => {
+    const fetchBookings = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          `https://gari-lagbe-server.vercel.app/bookings?email=${user.email}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user?.accessToken}`,
+            },
+          }
+        );
+
         const rawBookings = res.data;
 
         // enrich each booking with car info
         const enriched = await Promise.all(
-          rawBookings.map(async booking => {
-            const carRes = await axios.get(`https://gari-lagbe-server.vercel.app/available-cars/${booking.carId}`);
+          rawBookings.map(async (booking) => {
+            const carRes = await axios.get(
+              `https://gari-lagbe-server.vercel.app/available-cars/${booking.carId}`
+            );
             return {
               ...booking,
-              car: carRes.data
+              car: carRes.data,
             };
           })
         );
 
         setBookings(enriched);
-      });
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
   }, [user]);
 
   // Cancel booking
@@ -49,9 +66,14 @@ const MyBookings = () => {
     });
 
     if (confirm.isConfirmed) {
-      await axios.put(`https://gari-lagbe-server.vercel.app/bookings/${id}`, { status: "canceled" });
-      setBookings(prev =>
-        prev.map(b => b._id === id ? { ...b, status: "canceled" } : b)
+      await axios.put(
+        `https://gari-lagbe-server.vercel.app/bookings/${id}`,
+        { status: "canceled" }
+      );
+      setBookings((prev) =>
+        prev.map((b) =>
+          b._id === id ? { ...b, status: "canceled" } : b
+        )
       );
       Swal.fire("Canceled!", "Booking has been canceled.", "success");
     }
@@ -59,13 +81,16 @@ const MyBookings = () => {
 
   // Modify booking
   const handleModifySubmit = async () => {
-    await axios.put(`https://gari-lagbe-server.vercel.app/bookings/${selectedBooking._id}`, {
-      startDate: newDates.start,
-      endDate: newDates.end
-    });
+    await axios.put(
+      `https://gari-lagbe-server.vercel.app/bookings/${selectedBooking._id}`,
+      {
+        startDate: newDates.start,
+        endDate: newDates.end,
+      }
+    );
 
-    setBookings(prev =>
-      prev.map(b =>
+    setBookings((prev) =>
+      prev.map((b) =>
         b._id === selectedBooking._id
           ? { ...b, startDate: newDates.start, endDate: newDates.end }
           : b
@@ -75,6 +100,9 @@ const MyBookings = () => {
     Swal.fire("Updated!", "Booking dates updated.", "success");
     document.getElementById("modify_modal").close();
   };
+
+  // ✅ Loading হলে Loading component দেখাবে
+  if (loading) return <Loading />;
 
   return (
     <section className="p-6 max-w-7xl mx-auto">
@@ -93,15 +121,30 @@ const MyBookings = () => {
             </tr>
           </thead>
           <tbody>
-            {bookings.map(booking => (
+            {bookings.map((booking) => (
               <tr key={booking._id} className="hover:bg-base-200">
                 <td>
-                  <img src={booking.car?.imageUrl} alt="car" className="w-16 h-10 object-cover rounded" />
+                  <img
+                    src={booking.car?.imageUrl}
+                    alt="car"
+                    className="w-16 h-10 object-cover rounded"
+                  />
                 </td>
                 <td>{booking.car?.model || "Unknown"}</td>
-                <td>{format(new Date(booking.bookingDate), "dd-MM-yyyy HH:mm")}</td>
+                <td>
+                  {format(
+                    new Date(booking.bookingDate),
+                    "dd-MM-yyyy HH:mm"
+                  )}
+                </td>
                 <td>${booking.totalPrice}</td>
-                <td className={`capitalize font-medium ${booking.status === "canceled" ? "text-red-500" : "text-green-600"}`}>
+                <td
+                  className={`capitalize font-medium ${
+                    booking.status === "canceled"
+                      ? "text-red-500"
+                      : "text-green-600"
+                  }`}
+                >
                   {booking.status}
                 </td>
                 <td className="flex space-x-3">
@@ -116,7 +159,9 @@ const MyBookings = () => {
                     className="btn btn-sm btn-info flex items-center gap-1"
                     onClick={() => {
                       setSelectedBooking(booking);
-                      document.getElementById("modify_modal").showModal();
+                      document.getElementById(
+                        "modify_modal"
+                      ).showModal();
                     }}
                   >
                     <FaCalendarAlt /> Modify
@@ -131,24 +176,46 @@ const MyBookings = () => {
       {/* Modify Modal */}
       <dialog id="modify_modal" className="modal">
         <form method="dialog" className="modal-box">
-          <h3 className="text-lg font-bold mb-4">Modify Booking Date</h3>
+          <h3 className="text-lg font-bold mb-4">
+            Modify Booking Date
+          </h3>
           <input
             type="date"
             className="input input-bordered w-full mb-3"
             value={newDates.start}
-            onChange={(e) => setNewDates({ ...newDates, start: e.target.value })}
+            onChange={(e) =>
+              setNewDates({ ...newDates, start: e.target.value })
+            }
             required
           />
           <input
             type="date"
             className="input input-bordered w-full mb-3"
             value={newDates.end}
-            onChange={(e) => setNewDates({ ...newDates, end: e.target.value })}
+            onChange={(e) =>
+              setNewDates({ ...newDates, end: e.target.value })
+            }
             required
           />
           <div className="modal-action">
-            <button type="submit" className="btn btn-primary" onClick={handleModifySubmit}>Confirm</button>
-            <button type="button" className="btn" onClick={() => document.getElementById("modify_modal").close()}>Cancel</button>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              onClick={handleModifySubmit}
+            >
+              Confirm
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() =>
+                document
+                  .getElementById("modify_modal")
+                  .close()
+              }
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </dialog>

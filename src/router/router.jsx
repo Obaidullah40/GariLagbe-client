@@ -56,7 +56,7 @@ const router = createBrowserRouter([
                 element: <About />
             },
         ],
-        // errorElement:<NotFound/>
+        errorElement:<NotFound/>
     },
 
 ]);

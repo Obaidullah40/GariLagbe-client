@@ -1,26 +1,28 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router";
-import useAuth from "../hooks/useAuth";
+import Loading from "./Shared/Loading";
 
 const AvailableCars = () => {
   const [cars, setCars] = useState([]);
   const [view, setView] = useState("grid");
   const [sortOption, setSortOption] = useState("newest");
   const [searchTerm, setSearchTerm] = useState(""); 
+  const [loading, setLoading] = useState(true); 
 
-
-useEffect(() => {
-
-  axios.get("https://gari-lagbe-server.vercel.app/available-cars", )
-    .then((res) => {
-      setCars(res.data);
-    })
-    .catch((err) => {
-      console.error("Error fetching cars:", err);
-    });
-}, []);
-
+  useEffect(() => {
+    setLoading(true); 
+    axios
+      .get("https://gari-lagbe-server.vercel.app/available-cars")
+      .then((res) => {
+        setCars(res.data);
+        setLoading(false); 
+      })
+      .catch((err) => {
+        console.error("Error fetching cars:", err);
+        setLoading(false);
+      });
+  }, []);
 
   // 🔍 Filter then sort
   const filteredCars = cars.filter((car) =>
@@ -40,6 +42,8 @@ useEffect(() => {
     }
     return 0;
   });
+
+  if (loading) return <Loading />;
 
   return (
     <section className="py-16 px-4 md:px-10 bg-base-100 min-h-screen">
